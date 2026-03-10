@@ -8,11 +8,11 @@ import ArrowIcon from '../components/ArrowIcon';
 import { getGlobalData } from '../utils/global-data';
 import SEO from '../components/SEO';
 
-export default function Index({ posts, globalData }) {
+export default function Index({ posts, globalData, categories }) {
   return (
     <Layout>
       <SEO title={globalData.name} description={globalData.blogTitle} />
-      <Header name={globalData.name} />
+      <Header name={globalData.name} categories={categories}/>
       <main className="w-full">
         <h1 className="mb-12 text-3xl text-center lg:text-5xl">
           {globalData.blogTitle}
@@ -63,6 +63,6 @@ export default function Index({ posts, globalData }) {
 export function getStaticProps() {
   const posts = getPosts();
   const globalData = getGlobalData();
-
-  return { props: { posts, globalData } };
+  const categories = [...new Set(posts.map((p) => p.data.category).filter(Boolean))];
+  return { props: { posts, globalData, categories } };
 }

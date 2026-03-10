@@ -4,6 +4,7 @@ import {
   getPostBySlug,
   getPreviousPostBySlug,
   getPostFilePaths,
+  getPosts,
 } from '../../utils/mdx-utils';
 
 import { MDXRemote } from 'next-mdx-remote';
@@ -36,6 +37,7 @@ export default function PostPage({
   prevPost,
   nextPost,
   globalData,
+  categories,
 }) {
   return (
     <Layout>
@@ -43,7 +45,7 @@ export default function PostPage({
         title={`${frontMatter.title} - ${globalData.name}`}
         description={frontMatter.description}
       />
-      <Header name={globalData.name} />
+      <Header name={globalData.name} categories={categories}/>
       <article className="px-6 md:px-0">
         <header>
           <h1 className="mb-12 text-3xl text-center md:text-5xl dark:text-white">
@@ -109,6 +111,9 @@ export const getStaticProps = async ({ params }) => {
   const { mdxSource, data } = await getPostBySlug(params.slug);
   const prevPost = getPreviousPostBySlug(params.slug);
   const nextPost = getNextPostBySlug(params.slug);
+  // Get unique categories for the Nav
+  const allPosts = getPosts();
+  const categories = [...new Set(allPosts.map(p => p.data.category).filter(Boolean))];
 
   return {
     props: {
@@ -117,6 +122,7 @@ export const getStaticProps = async ({ params }) => {
       frontMatter: data,
       prevPost,
       nextPost,
+      categories,
     },
   };
 };
